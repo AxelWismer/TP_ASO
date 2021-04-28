@@ -14,9 +14,10 @@
     {{range $_, $ev := $.Materia.Evaluaciones}}
     <p>{{$ev.Nombre}} Categoria: {{$ev.Categoria }}</p>
     {{range $_, $nota := $ev.Notas}}
-	    <p>Nota: {{$nota.Nota}},  Alumno: {{$nota.Alumno.Nombre }}</p> 
+	    <p>Nota: {{$nota.Nota}},  Alumno: {{$nota.Alumno.Legajo}}, {{$nota.Alumno.Apellido}}, {{$nota.Alumno.Nombre}}</p> 
     {{end}}
     {{end}}
 
+    <button><a href="http://127.0.0.1:8082/nota/crear">Crear nota</a> </button>
 </body>
 </html>

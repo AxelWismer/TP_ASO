@@ -11,17 +11,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-type Note struct {
-	Id      int       `json:"id"`
-	Note    int       `json:"note"`
-	Created time.Time `json:"created"`
-}
-type Notes []Note
-
 //BD de notas
-var noteStore = make(map[string]Note)
-var noteId = 0
-
 var materia DB.Materia = DB.GetDB()
 
 func GETNotasAlumno(w http.ResponseWriter, r *http.Request) {
@@ -74,58 +64,54 @@ func GETNotasMateria(w http.ResponseWriter, r *http.Request) {
 }
 
 func POSTNoteHandler(w http.ResponseWriter, r *http.Request) {
-	var note Note
+	n := struct {
+		Nota       int    `json:"nota"`
+		Evaluacion string `json:"evaluacion"`
+		Alumno     int    `json:"alumno"`
+	}{}
+	nota := DB.Nota{}
 	//Decodificar el json en una estructura nota
-	err := json.NewDecoder(r.Body).Decode(&note)
-	if err != nil {
+
+	if err := json.NewDecoder(r.Body).Decode(&n); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	//Incrementar el id
-	noteId++
-	note.Id = noteId
-	//Se la marca como creada
-	note.Created = time.Now()
-	k := strconv.Itoa(noteId)
-	noteStore[k] = note
+	fmt.Println(n)
+
+	nota.Nota = n.Nota
+	if eval, ok := materia.Evaluaciones[n.Evaluacion]; ok {
+		nota.Evaluacion = eval
+	} else {
+		w.WriteHeader(http.StatusNoContent)
+		return
+	}
+	if al, ok := materia.Alumnos[n.Alumno]; ok {
+		nota.Alumno = al
+	} else {
+		w.WriteHeader(http.StatusNoContent)
+		return
+	}
+
+	materia.Notas = append(materia.Notas, nota)
 
 	//Se devuelve la nota serializada
 	w.Header().Set("Content-Type", "application/json")
 	//Serializar el array
-	j, err := json.Marshal(note)
+	j, err := json.Marshal(nota)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 	} else {
 		w.WriteHeader(http.StatusCreated)
 		w.Write(j)
 	}
-
 }
 
-func PUTNoteHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	id := vars["id"]
-	var noteUpdate Note
-	err := json.NewDecoder(r.Body).Decode(&noteUpdate)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-	if note, ok := noteStore[id]; ok {
-		noteUpdate.Id, _ = strconv.Atoi(id)
-		noteUpdate.Created = note.Created
-		delete(noteStore, id)
-		noteStore[id] = noteUpdate
-	}
-	w.WriteHeader(http.StatusNoContent)
-
-}
-func DELETENoteHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	id := vars["id"]
-	delete(noteStore, id)
-	w.WriteHeader(http.StatusNoContent)
-}
+//func DELETENoteHandler(w http.ResponseWriter, r *http.Request) {
+//	vars := mux.Vars(r)
+//	id := vars["id"]
+//	delete(noteStore, id)
+//	w.WriteHeader(http.StatusNoContent)
+//}
 
 func main() {
 	r := mux.NewRouter().StrictSlash(false)
@@ -133,8 +119,7 @@ func main() {
 	r.HandleFunc("/api/notes/{legajo}", GETNotasAlumno).Methods("GET")
 
 	r.HandleFunc("/api/notes", POSTNoteHandler).Methods("POST")
-	r.HandleFunc("/api/notes/{id}", PUTNoteHandler).Methods("PUT")
-	r.HandleFunc("/api/notes/{id}", DELETENoteHandler).Methods("DELETE")
+	//	r.HandleFunc("/api/notes/{id}", DELETENoteHandler).Methods("DELETE")
 
 	server := &http.Server{
 		Addr:           ":8080",
