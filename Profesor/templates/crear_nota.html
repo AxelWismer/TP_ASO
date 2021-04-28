@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ver Notas</title>
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=">
+
+</head>
+
+<body>
+    <h1>Materia: {{ .Materia.Nombre }}</h1>
+    <h3>Crear nueva nota</h3>
+    <form action="/nota/crear" method="post">
+
+        <label for="evaluacion">Evaluacion:</label>
+        <select name="evaluacion" id="evaluacion">
+            {{range $_, $ev := $.Materia.Evaluaciones}}
+            <option value="{{$ev.Nombre}}">{{$ev.Nombre}} Categoria: {{$ev.Categoria }}</option>
+            {{end}}
+        </select>
+        <p></p>
+        <label for="alumno">Alumno:</label>
+        <select name="alumno" id="alumno">
+            {{range $_, $al := $.Materia.Alumnos}}
+            <option value="{{$al.Legajo}}">{{$al.Legajo}}: {{$al.Nombre}}</option>
+            {{end}}
+        </select>
+        <p></p>
+        Nota: <input name="nota" id="nota" type="number" min="0" max="10" value="0">
+        <p></p>
+        <input type="submit" value="Registrar">
+    </form>
+</body>
+
+</html>
