@@ -22,16 +22,17 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 	//Variable de contexto de la template
 	context := map[string]interface{}{}
 
-	//Lectura de una template
-	t, err := template.ParseFiles("Alumno/templates/alumno.html")
-	if err != nil {
+	//Lectura del template
+	if t, err := template.ParseFiles("Alumno/templates/alumno.html"); err == nil {
+		//Llenado de la template, con defer se deja
+		//la sentencia para el final de la ejecucion
+		defer t.Execute(w, context)
+	} else {
 		fmt.Println(err)
 		return
 	}
-	//Llenado de la template, con defer se deja
-	//la sentencia para el final de la ejecucion
-	defer t.Execute(w, context)
-	//Peticion a la blockchain
+
+	//Lectura del parametro legajo
 	vars := mux.Vars(r)
 	legajo := vars["legajo"]
 

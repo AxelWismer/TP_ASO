@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 	"time"
@@ -23,7 +24,7 @@ var noteId = 0
 
 var materia DB.Materia = DB.GetDB()
 
-func GETNoteHandler(w http.ResponseWriter, r *http.Request) {
+func GETNotasAlumno(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	//OBtener el legajo
 	vars := mux.Vars(r)
@@ -39,6 +40,8 @@ func GETNoteHandler(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNoContent)
 		return
 	}
+	//Obtener las notas del alumno para su envio
+	alumno.GETNotas(materia.Notas)
 	//Serializar notas
 	j, err := json.Marshal(struct {
 		Alumno  DB.Alumno `json:"alumno"`
@@ -54,6 +57,19 @@ func GETNoteHandler(w http.ResponseWriter, r *http.Request) {
 		//Escribir el json
 		w.WriteHeader(http.StatusOK)
 		w.Write(j)
+	}
+}
+
+func GETNotasMateria(w http.ResponseWriter, r *http.Request) {
+	//Serializar notas
+	if j, err := json.Marshal(materia); err == nil {
+		//Escribir el json
+		w.WriteHeader(http.StatusOK)
+		w.Write(j)
+	} else {
+		fmt.Println(err)
+		//Indicar un error interno
+		w.WriteHeader(http.StatusInternalServerError)
 	}
 }
 
@@ -113,7 +129,9 @@ func DELETENoteHandler(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	r := mux.NewRouter().StrictSlash(false)
-	r.HandleFunc("/api/notes/{legajo}", GETNoteHandler).Methods("GET")
+	r.HandleFunc("/api/notes", GETNotasMateria).Methods("GET")
+	r.HandleFunc("/api/notes/{legajo}", GETNotasAlumno).Methods("GET")
+
 	r.HandleFunc("/api/notes", POSTNoteHandler).Methods("POST")
 	r.HandleFunc("/api/notes/{id}", PUTNoteHandler).Methods("PUT")
 	r.HandleFunc("/api/notes/{id}", DELETENoteHandler).Methods("DELETE")
