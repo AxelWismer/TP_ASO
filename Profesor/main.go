@@ -63,6 +63,6 @@ func main() {
 		WriteTimeout:   10 * time.Second,
 		MaxHeaderBytes: 1 << 20,
 	}
-	fmt.Println("Servidor del profesor funcionando")
+	fmt.Println("Servidor del profesor funcionando en: http://127.0.0.1:8082")
 	server.ListenAndServe()
 }

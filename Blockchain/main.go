@@ -143,6 +143,7 @@ func main() {
 		WriteTimeout:   10 * time.Second,
 		MaxHeaderBytes: 1 << 20,
 	}
+	fmt.Println("Blockchain funcionando en: http://127.0.0.1:8080")
 
 	server.ListenAndServe()
 }
