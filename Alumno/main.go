@@ -49,12 +49,21 @@ func GETNotasAlumno(w http.ResponseWriter, r *http.Request) {
 	} else {
 		fmt.Println(err)
 	}
+}
 
+func GETNotas(w http.ResponseWriter, r *http.Request) {
+	//Lectura del template
+	if t, err := template.ParseFiles("Alumno/templates/alumno.html"); err == nil {
+		//Llenado de la template, con defer se deja
+		//la sentencia para el final de la ejecucion
+		t.Execute(w, nil)
+	}
 }
 
 func main() {
 	r := mux.NewRouter().StrictSlash(false)
 	r.HandleFunc("/{legajo}", GETNotasAlumno).Methods("GET")
+	r.HandleFunc("/", GETNotas).Methods("GET")
 
 	//Configuracion del servidor
 	server := &http.Server{

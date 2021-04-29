@@ -9,17 +9,22 @@
 
 </head>
 <body>
-    
-    <h1>Materia: {{ .response.Materia }}</h1>
     <label for="alumno">Alumnos:</label>
     <a href="http://127.0.0.1:8081/75930">Axel</a>
     <a href="http://127.0.0.1:8081/75428">Mateo</a>
     <a href="http://127.0.0.1:8081/75527">Diego</a>
+
+    {{if .response }}
+    <h1>Materia: {{ .response.Materia }}</h1>
     
     <h2>Alumno: {{ .response.Alumno.Nombre}} {{ .response.Alumno.Apellido}} {{ .response.Alumno.Legajo}} ({{ .response.Alumno.Año}})</h2>
     <h3>Notas</h3>
     {{range $_, $nota := $.response.Alumno.Notas}}
 	    <p>Nota: {{$nota.Nota}},  Evaluacion: {{$nota.Evaluacion.Nombre }}, Categoria: {{$nota.Evaluacion.Categoria }}</p> 
     {{end}}
+    {{else}}
+    <p>Se debe iniciar sesion con un usuario</p>
+    {{end}}
+
 </body>
 </html>
