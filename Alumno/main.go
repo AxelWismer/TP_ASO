@@ -90,15 +90,6 @@ func GETNotasAlumno(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func GETNotas(w http.ResponseWriter, r *http.Request) {
-	//Lectura del template
-	if t, err := template.ParseFiles("Alumno/templates/alumno.html"); err == nil {
-		//Llenado de la template, con defer se deja
-		//la sentencia para el final de la ejecucion
-		t.Execute(w, nil)
-	}
-}
-
 func GETAlumnos(w http.ResponseWriter, r *http.Request) {
 	//Lectura del template
 	if t, err := template.ParseFiles("Alumno/templates/login.html"); err == nil {
