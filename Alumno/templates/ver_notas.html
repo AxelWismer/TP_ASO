@@ -14,7 +14,7 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
               <li class="nav-item">
-                <a class="nav-link" aria-current="page" href="/notas">Ver Mis Notas</a>
+                <a class="nav-link disabled" aria-current="page" href="/notas">Ver Mis Notas</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" aria-current="page" href="/">Salir</a>
@@ -39,9 +39,9 @@
         <div class="col-sm-12" style="margin-top:30px;"> 
             <table class="table table-hover">
                 <thead class="thead-light">
-                    <th class="text-center" scope="col">Evaluacion</th>
-                    <th class="text-center" scope="col">Ctegoría</th>
-                    <th class="text-center" scope="col">Nota</th>
+                    <th scope="col">Evaluacion</th>
+                    <th scope="col">Ctegoría</th>
+                    <th scope="col">Nota</th>
                 </thead>
                 <tbody>
                     {{range $_, $nota := $.response.Alumno.Notas}}
@@ -58,6 +58,5 @@
         <p>Se debe iniciar sesion con un usuario</p>
         {{end}}
     </div>
-    
 </body>
 </html>
