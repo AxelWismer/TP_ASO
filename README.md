@@ -18,3 +18,10 @@ Se muestra aqui un prototipo que representa una version simplificada de la arqui
 ![alt text](/doc/interfaces/profesor_nota_ver.png)
 ### Registrar una nueva nota
 ![alt text](/doc/interfaces/profesor_nota_crear.png)
+
+## Blockchain
+La blockchain es representada por un microservicio en go y contiene el siguente esquema de datos, definidos en DB/models.go
+
+![alt text](/doc/esquema_datos.png)
+
+Ademas en DB/models.go se encuentra definida la BD de prueba que contiene los datos que se visualizan en las interfaces de la aplicacion del alumno y del profesor
