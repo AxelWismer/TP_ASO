@@ -54,6 +54,45 @@ func GETNotasMateria(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func GETNotasAlumno(w http.ResponseWriter, r *http.Request) {
+	//Estructura de la respuesta
+	response := struct {
+		Alumno  DB.Alumno `json:"alumno"`
+		Materia string    `json:"materia"`
+	}{}
+
+	//Variable de contexto de la template
+	context := map[string]interface{}{}
+
+	//Lectura del template
+	if t, err := template.ParseFiles("Profesor/templates/ver_notas.html"); err == nil {
+		//Llenado de la template, con defer se deja
+		//la sentencia para el final de la ejecucion
+		defer t.Execute(w, context)
+		//Lectura del parametro legajo
+		vars := mux.Vars(r)
+		legajo := vars["legajo"]
+		//Peticion al servidor de blockchain
+		if resp, err := http.Get("http://127.0.0.1:8080/api/notes/" + legajo); err == nil {
+			//Lectura del body
+			if body, err := ioutil.ReadAll(resp.Body); err == nil {
+				//Desearializar el contendio y agregarlo al context de la template
+				if err := json.Unmarshal(body, &response); err == nil {
+					context["response"] = response
+				} else {
+					fmt.Println(err)
+				}
+			} else {
+				fmt.Println(err)
+			}
+		} else {
+			fmt.Println(err)
+		}
+	} else {
+		fmt.Println(err)
+	}
+}
+
 func GETCrearNota(w http.ResponseWriter, r *http.Request) {
 	//Variable de contexto de la template
 	var materia DB.Materia
@@ -118,6 +157,7 @@ func POSTCrearNota(w http.ResponseWriter, r *http.Request) {
 func main() {
 	r := mux.NewRouter().StrictSlash(false)
 	r.HandleFunc("/", GETNotasMateria).Methods("GET")
+	r.HandleFunc("/nota/ver/{legajo}", GETNotasAlumno).Methods("GET")
 	r.HandleFunc("/nota/crear", GETCrearNota).Methods("GET")
 	r.HandleFunc("/nota/crear", POSTCrearNota).Methods("POST")
 
